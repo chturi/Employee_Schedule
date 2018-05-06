@@ -1,0 +1,392 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Schedule</h2>
+<div id="scheduler"></div>
+
+@*Event click modal*@
+<div id="eventClickModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                    <span class="=" glyphicon glyphicon-remove"></span> Remove
+                </button>
+                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                    <span class="=" glyphicon glyphicon-remove"></span> Edit
+                </button>
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*Edit/Add Event Modal*@
+<div id="eventAddModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Save Event</h4>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" id="hdEventID" value="0" />
+                    <input type="hidden" id="hdEmployeeID" value="0" />
+                    <div class="form-group">
+                        <label>Employee</label>
+                        <input readonly type="text" id="txtSubject" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Start</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtStart" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label> <input type="checkbox" id="chkIsFullDay" checked="checked" /> Is Full day event</label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEndDate" style="display:none">
+                        <label>End</label>
+                        <div class="input-group date" id="dtp2">
+                            <input type="text" id="txtEnd" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea readonly="readonly" id="txtDescription" rows="3" style="color: #787878;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Theme Color</label>
+                        <select id="ddThemeColor" class="form-control">
+                            <option value="red">Red</option>
+                            <option value="blue">Blue</option>
+                            <option value="black">Black</option>
+                            <option value="green">Green</option>
+                            <option value="yellow">Yellow</option>
+                        </select>
+                    </div>
+                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.print.css" rel="stylesheet" media="print"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+@section scripts{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+   
+    <script>
+        //Schedule functions
+        $(document).ready(function () {
+
+            var schedule = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+
+            //Ajax call to get the events from database           
+            function FetchEventAndRenderCalendar() {
+                schedule = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/Schedule/GetEvents",
+                    success: function (data) {
+                        //For loop to get all events in database
+                        $.each(data, function (i, v) {
+                            schedule.push({
+                                eventID: v.EventID,
+                                title: v.title,
+                                description: v.Description,
+                                start: moment(v.Start),
+                                end: v.End != null ? moment(v.End) : null,
+                                color: v.ThemeColor,
+                                allDay: v.IsFullDay,
+                                resourceId: v.EmployeeID,
+                                color: v.ThemeColor
+                            });
+                        })
+                        //console.log(schedule)
+                        GenerateScheduler(schedule)
+                        $('#scheduler').fullCalendar('refetchEvents')
+                        $('#scheduler').fullCalendar('refetchResources')
+                        $('#scheduler').fullCalendar('render')
+                    },
+                    //Catch error of loading
+                    error: function (error) {
+                        alert('Failed to load all events in schedule!')
+                    },
+                })
+            }
+         
+
+         
+
+            //Function to Generate Calendar
+            function GenerateScheduler(schedule) {
+                //Clear any previous rendered Scheduler
+                $('#scheduler').fullCalendar('destroy')
+                //Generate new Scheduler
+                $('#scheduler').fullCalendar({
+                    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', //Open source liscence key
+                    contentHeight: 400,
+                    defaultDate: new Date(), //Display todays date by default
+                    defaultView: 'timelineWeek',
+                    timeFormat: 'h(:mm)a',
+                    header: {
+                        left: 'prev,next today', //Option buttons on left corner of header of Scheduler
+                        center: 'title',
+                        right: 'month,timelineFiveDays'
+                    },
+                    views: { //Adds timeline view option for fullcalender, "resource view"
+                        timelineFiveDays: {
+                            type: 'timelineWeek',
+                            duration: { days: 5 },
+                            minTime: '06:00:00',
+                            maxTime: '18:00:00',
+                            slotDuration: '04:00:00',
+                            slotLabelInterval: '04:00:00',
+                            scrollTime: '06:00'
+                        }
+                    },
+                    //eventLimit: true, //if resource slot is full, replaces graphical represenation with plus sign.
+                    eventColor: '#378006', //Default event color
+                    events: schedule, 
+                    resourceGroupField: 'groupId',
+                    resources: {
+                        url: "/Schedule/GetResources",
+                        type: 'POST'
+                    },
+                    eventClick: function (calEvent, jsEvent, view) {
+                        //Creates HTML code for displaying on event click details
+                        selectedEvent = calEvent;
+                        $('#eventClickModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        $description.append($('<p>').html('<b>Start: </b>' + calEvent.start.format("MM-DD-YYYY HH:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p>').html('<b>End: </b>' + calEvent.end.format("MM-DD-YYYY HH:mm a")));
+                        }
+                        $description.append($('<p>').html('<b>Description: </b>' + calEvent.description));
+                        $('#eventClickModal #pDetails').empty().html($description);
+                        $('#eventClickModal').modal();
+                    },
+                    select: function (start,end,event,view,resource) {
+                        
+                        var ResourceTitle = resource.title
+                        var ResourceId = resource.id
+                        selectedEvent = {
+                            eventID: 0,
+                            title: ResourceTitle,
+                            description: '',
+                            start: start,
+                            end: end,
+                            allDay: false,
+                            color: '',
+                            resourceId: ResourceId
+
+
+
+                        }
+                        console.log(selectedEvent)
+                        openAddEditForm();
+                    },
+                    //Time slot settings
+                    minTime: '06:00:00',
+                    maxTime: '18:00:00',
+                    slotDuration: '04:00:00',
+                    slotLabelInterval: '04:00:00',
+                    scrollTime: '06:00',
+                    //Editable information
+                    editable: true,
+                    droppable: true,
+                    selectable: true,
+                    eventDrop: function (event) {
+                        var data = {
+                            EventID: event.eventID,
+                            EmployeeID: event.resourceId,
+                            Start: event.start.format("MM-DD-YYYY HH:mm a"),
+                            End: event.end != null ? event.end.format("MM-DD-YYYY HH:mm a") : null,
+                            Description: event.description,
+                            ThemeColor: event.color,
+                            IsFullDay: event.allDay
+                        }
+                        SaveEvent(data);
+                    }
+                })
+                console.log(schedule)
+            }
+
+            //Function to Open Add/Edit form
+            function openAddEditForm() {
+                if (selectedEvent != null) {
+                    //Gives value to the modal CSS/HTML code.
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    $('#hdEmployeeID').val(selectedEvent.resourceId);
+                    $('#txtSubject').val(selectedEvent.title);
+                    $('#txtStart').val(selectedEvent.start.format('MM/DD/YYYY HH:mm A'));
+                    $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
+                    $('#chkIsFullDay').change();
+                    $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('MM/DD/YYYY HH:mm A') : "");
+                    $('#txtDescription').val(selectedEvent.description);
+                    $('#ddThemeColor').val(selectedEvent.color);
+
+                    console.log(selectedEvent)
+
+                }
+
+                //Hides modal
+                $('#eventClickModal').modal('hide');
+                $('#eventAddModal').modal();
+
+
+            }
+
+            //Function to Save a event to database
+            function SaveEvent(data) {
+                $.ajax({//Ajax is used for to call controller to get and post data.
+                    type: 'POST',
+                    url: '/Schedule/SaveEvent', //Call Controller
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            FetchEventAndRenderCalendar();
+                            $('#eventAddModal').modal('hide');
+
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to Save event!');
+                    }
+                })
+            }
+
+            //DeleteEvent Button
+            $('#btnDelete').click(function () {
+
+                if (selectedEvent != null && confirm('Are you sure?'))
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Schedule/DeleteEvent",
+                        data: {'eventID': selectedEvent.eventID}, //Used to send data through HTTP request POST
+                        success: function (data) {
+                            if(data.status)
+                            {  //refresh calender if success
+                                FetchEventAndRenderCalendar();
+                                $('#eventClickModal').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to delete event!')
+                        }
+
+
+                    })
+                }
+                {
+
+                }
+            })
+
+            //Open Edit/Add form
+            $('#btnEdit').click(function () {
+            //Open modal window for edit form for selected event
+            openAddEditForm();
+            })
+
+            //Save Event Button
+            $('#btnSave').click(function () {
+
+
+                //Check if text is inputted in submit
+                if ($('#txtSubject').val().trim() == "") {
+                    alert('Subject required')
+                    return;
+                }
+                if ($('#txtStart').val().trim() == "") {
+                    alert('Start Date required')
+                    return;
+                }
+                if ($('#chkIsFullDay').is(':checked') == false && $('#txtEnd').val().trim() == "") {
+                    alert('End Date required')
+                    return;
+                }
+                else {
+                    var startDate = moment($('#txtStart').val(), "MM/DD/YYYY HH:mm A").toDate();
+                    var endDate = moment($('#txtEnd').val(), "MM/DD/YYYY HH:mm A").toDate();
+                    if (startDate > endDate) {
+                        alert('Invalid End date');
+                        return;
+                    }
+                }
+
+                var data = {
+
+                    EventID: $('#hdEventID').val(),
+                    EmployeeID: $('#hdEmployeeID').val(),
+                    Start: $('#txtStart').val().trim(),
+                    End: $('#chkIsFullDay').is(':checked') ? null : $('#txtEnd').val().trim(),
+                    Description: $('#txtDescription').val(),
+                    ThemeColor: $('#ddThemeColor').val(),
+                    IsFullDay: $('#chkIsFullDay').is(':checked')
+                    
+                }
+
+                console.log(data);
+                SaveEvent(data);
+
+
+            })
+
+            $('#dtp1', '#dtp2').datetimepicker({
+                format: 'MM/DD/YYYY HH:mm A'
+            })
+            $('#chkIsFullDay').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#divEndDate').hide()
+                }
+                else {
+                    $('#divEndDate').show()
+                }
+            })
+        })
+
+    </script>    
+    }
+
