@@ -129,14 +129,14 @@ namespace Employee_Schedule.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteEvent(int evntID)
+        public JsonResult DeleteEvent(int eventID)
         {
             Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
             db.Configuration.ProxyCreationEnabled = false;
             var status = false;
 
             //Finds event by ID which should be deleted
-            var evnt = db.Events.Where(a => a.EventID == evntID).FirstOrDefault();
+            var evnt = db.Events.Where(a => a.EventID == eventID).FirstOrDefault();
 
             if (evnt != null)
             {

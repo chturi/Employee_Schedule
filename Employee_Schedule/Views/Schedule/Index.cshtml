@@ -206,6 +206,26 @@
                         $('#eventClickModal #pDetails').empty().html($description);
                         $('#eventClickModal').modal();
                     },
+                    select: function (start,end,event,view,resource) {
+                        
+                        var ResourceTitle = resource.title
+                        var ResourceId = resource.id
+                        selectedEvent = {
+                            eventID: 0,
+                            title: ResourceTitle,
+                            description: '',
+                            start: start,
+                            end: end,
+                            allDay: false,
+                            color: '',
+                            resourceId: ResourceId
+
+
+
+                        }
+                        console.log(selectedEvent)
+                        openAddEditForm();
+                    },
                     //Time slot settings
                     minTime: '06:00:00',
                     maxTime: '18:00:00',
@@ -215,6 +235,19 @@
                     //Editable information
                     editable: true,
                     droppable: true,
+                    selectable: true,
+                    eventDrop: function (event) {
+                        var data = {
+                            EventID: event.eventID,
+                            EmployeeID: event.resourceId,
+                            Start: event.start.format("MM-DD-YYYY HH:mm a"),
+                            End: event.end != null ? event.end.format("MM-DD-YYYY HH:mm a") : null,
+                            Description: event.description,
+                            ThemeColor: event.color,
+                            IsFullDay: event.allDay
+                        }
+                        SaveEvent(data);
+                    }
                 })
                 console.log(schedule)
             }
@@ -253,7 +286,7 @@
                     success: function (data) {
                         if (data.status) {
                             FetchEventAndRenderCalendar();
-                            $('#eventSaveModal').modal('hide');
+                            $('#eventAddModal').modal('hide');
 
                         }
                     },
@@ -271,7 +304,7 @@
                     $.ajax({
                         type: 'POST',
                         url: "/Schedule/DeleteEvent",
-                        data: {'eventID': selectedEvent.EventID}, //Used to send data through HTTP request POST
+                        data: {'eventID': selectedEvent.eventID}, //Used to send data through HTTP request POST
                         success: function (data) {
                             if(data.status)
                             {  //refresh calender if success
