@@ -111,7 +111,8 @@ namespace Employee_Schedule.Controllers
                     oldEvent.Start = evnt.Start;
                     oldEvent.End = evnt.End;
                     oldEvent.IsFullDay = evnt.IsFullDay;
-                    oldEvent.Description = evnt.Description; 
+                    oldEvent.Description = evnt.Description;
+                    oldEvent.ThemeColor = evnt.ThemeColor; 
                 }
             }
             //If a new event is added, it just adds the new event to DB
