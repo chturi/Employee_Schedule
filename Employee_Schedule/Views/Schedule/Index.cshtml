@@ -338,11 +338,58 @@
                 })
             }
 
+            //Function to save new Employee
+            function SaveEmployee(data)
+            {
+                $.ajax({//Ajax is used for to call controller to get and post data.
+                    type: 'POST',
+                    url: '/Schedule/SaveEmployee', //Call Controller
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            FetchEventAndRenderCalendar();
+                            $('#costumerAddModal').modal('hide');
+
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to Save Employee!');
+                    }
+                })
+            }
+
             //Button to Add Employee
             $('#btnAddEmployee').click(function () {
-                console.log("Adding employee")
                 openAddEmployeeForm();
             })
+            
+            //Button to Save New Employee
+            $('#btnSaveEmployee').click(function () {
+                if ($('#txtFirstName').val().trim() == "") {
+                    alert('First Name required')
+                    return;
+                }
+                if ($('#txtLastName').val().trim() == "") {
+                    alert('Last Name required')
+                    return;
+                }
+                if ($('#ddOccupation').val().trim() == "") {
+                    alert('Occupation required')
+                    return;
+                }
+
+
+                var data = {
+                    EmployeeID: $('#hdEmployeeID').val(),
+                    FirstName: $('#txtFirstName').val(),
+                    LastName: $('#txtLastName').val().trim(),
+                    Occupation: $('#ddOccupation').val(),
+
+                }
+
+                SaveEmployee(data)
+            })
+
 
             //DeleteEvent Button
             $('#btnDelete').click(function () {

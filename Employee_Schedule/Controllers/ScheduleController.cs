@@ -152,42 +152,43 @@ namespace Employee_Schedule.Controllers
         }
 
 
-        //[HttpPost]
-        //public JsonResult SaveEmployee(resourceModel emp)
-        //{
+        [HttpPost]
+        public JsonResult SaveEmployee(Employee emp)
+        {
 
-        //    Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
-        //    db.Configuration.ProxyCreationEnabled = false;
-        //    var status = false;
+            Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
+            db.Configuration.ProxyCreationEnabled = false;
+            var status = false;
 
-        //    //If the event ID is bigger than zero its a existing event.
-        //    if (evnt.EventID > 0)
-        //    {
-        //        //Grabs event with given ID from the database
-        //        var oldEvent = db.Events.Where(a => a.EventID == evnt.EventID).FirstOrDefault();
+            //If the event ID is bigger than zero its a existing event.
+            if (emp.EmployeeID > 0)
+            {
+                //Grabs event with given ID from the database
+                var oldEvent = db.Employees.Where(a => a.EmployeeID == emp.EmployeeID).FirstOrDefault();
 
-        //        if (oldEvent != null)
-        //        {
-        //            //Replaces fields that has been updated
-               
-        //        }
-        //    }
-        //    //If a new event is added, it just adds the new event to DB
-        //    else
-        //    {
+                if (oldEvent != null)
+                {
+                    //Replaces fields that has been updated
 
-        //        db.Events.Add(evnt);
-        //    }
+                }
+            }
+            //If a new event is added, it just adds the new event to DB
+            else
+            {
 
-        //    db.SaveChanges();
-        //    status = true;
+                db.Employees.Add(emp);
+            }
 
-        //    return new JsonResult { Data = new { status = status } };
-        //}
+            db.SaveChanges();
+            status = true;
 
-
-    //}
-    }
+            return new JsonResult { Data = new { status = status } };
+        }
 
 
     }
+
+}
+
+
+    
