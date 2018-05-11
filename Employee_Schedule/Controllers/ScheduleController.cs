@@ -151,7 +151,6 @@ namespace Employee_Schedule.Controllers
             
         }
 
-
         [HttpPost]
         public JsonResult SaveEmployee(Employee emp)
         {
@@ -184,7 +183,6 @@ namespace Employee_Schedule.Controllers
 
             return new JsonResult { Data = new { status = status } };
         }
-
 
     }
 
