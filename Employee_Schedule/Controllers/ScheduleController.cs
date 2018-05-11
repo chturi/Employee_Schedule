@@ -150,7 +150,44 @@ namespace Employee_Schedule.Controllers
             return new JsonResult{ Data = new {status=status}};
             
         }
-}
+
+
+        //[HttpPost]
+        //public JsonResult SaveEmployee(resourceModel emp)
+        //{
+
+        //    Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
+        //    db.Configuration.ProxyCreationEnabled = false;
+        //    var status = false;
+
+        //    //If the event ID is bigger than zero its a existing event.
+        //    if (evnt.EventID > 0)
+        //    {
+        //        //Grabs event with given ID from the database
+        //        var oldEvent = db.Events.Where(a => a.EventID == evnt.EventID).FirstOrDefault();
+
+        //        if (oldEvent != null)
+        //        {
+        //            //Replaces fields that has been updated
+               
+        //        }
+        //    }
+        //    //If a new event is added, it just adds the new event to DB
+        //    else
+        //    {
+
+        //        db.Events.Add(evnt);
+        //    }
+
+        //    db.SaveChanges();
+        //    status = true;
+
+        //    return new JsonResult { Data = new { status = status } };
+        //}
+
+
+    //}
+    }
 
 
     }

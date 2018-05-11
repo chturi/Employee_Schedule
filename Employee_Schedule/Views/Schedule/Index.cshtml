@@ -5,6 +5,46 @@
 
 <h2>Schedule</h2>
 <div id="scheduler"></div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" id="btnAddEmployee" style="float: left">Add Employee</button>
+</div>
+
+
+@*Add Costumer Modal*@
+<div id="costumerAddModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" id="hdEmployeeID" value="0" />
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="txtFirstName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="txtLastName" class="form-control" />
+                    </div>            
+                      <div class="form-group">
+                        <label>Occupation</label>
+                        <select id="ddOccupation" class="form-control">
+                            <option value="Chef">Chef</option>
+                            <option value="Waiter">Waiter</option>
+                        </select>
+                    </div>
+                    <button type="button" id="btnSaveEmployee" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 @*Event click modal*@
 <div id="eventClickModal" class="modal fade" role="dialog">
@@ -154,10 +194,7 @@
                     },
                 })
             }
-         
-
-         
-
+        
             //Function to Generate Calendar
             function GenerateScheduler(schedule) {
                 //Clear any previous rendered Scheduler
@@ -249,7 +286,6 @@
                         SaveEvent(data);
                     }
                 })
-                console.log(schedule)
             }
 
             //Function to Open Add/Edit form
@@ -277,6 +313,12 @@
 
             }
 
+            //Open add costumer modal form
+            function openAddEmployeeForm()
+            {   console.log("openAddEmployee function")
+            $('#costumerAddModal').modal('show');
+            }
+
             //Function to Save a event to database
             function SaveEvent(data) {
                 $.ajax({//Ajax is used for to call controller to get and post data.
@@ -295,6 +337,12 @@
                     }
                 })
             }
+
+            //Button to Add Employee
+            $('#btnAddEmployee').click(function () {
+                console.log("Adding employee")
+                openAddEmployeeForm();
+            })
 
             //DeleteEvent Button
             $('#btnDelete').click(function () {
@@ -367,13 +415,8 @@
                     IsFullDay: $('#chkIsFullDay').is(':checked')
                     
                 }
-
-                console.log(data);
                 SaveEvent(data);
-
-
             })
-
             $('#dtp1', '#dtp2').datetimepicker({
                 format: 'MM/DD/YYYY HH:mm A'
             })
@@ -385,8 +428,12 @@
                     $('#divEndDate').show()
                 }
             })
-        })
 
+            
+
+
+
+        })
     </script>    
     }
 
