@@ -10,8 +10,8 @@
 </div>
 
 
-@*Add/Edit Costumer Modal*@
-<div id="costumerAddModal" class="modal fade" role="dialog">
+@*Add/Edit Employee Modal*@
+<div id="employeeAddModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -43,8 +43,6 @@
         </div>
     </div>
 </div>
-
-
 
 @*Event click modal*@
 <div id="eventClickModal" class="modal fade" role="dialog">
@@ -160,10 +158,6 @@
 
 
 
-
-
-
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.print.css" rel="stylesheet" media="print"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.css" rel="stylesheet" />
@@ -216,8 +210,7 @@
                         alert('Failed to load all events in schedule!')
                     },
                 })
-            }
-        
+            }    
             //Function to Generate Calendar
             function GenerateScheduler(schedule) {
                 //Clear any previous rendered Scheduler
@@ -253,6 +246,7 @@
                         url: "/Schedule/GetResources",
                         type: 'POST'
                     },
+                    //On click event for resources
                     resourceRender: function(resource, labelTds, bodyTds) {
                         labelTds.on('click', function () {
                             selectedResource = resource;
@@ -263,7 +257,6 @@
                             $description.append($('<p>').html('<b>Occupation: </b>' + resource.groupId));
                             $('#resourceClickModal #pDetailsRes').empty().html($description);
                             $('#resourceClickModal').modal();
-
                         });
                     },
                     eventClick: function (calEvent, jsEvent, view) {
@@ -279,8 +272,7 @@
                         $('#eventClickModal #pDetails').empty().html($description);
                         $('#eventClickModal').modal();
                     },
-                    select: function (start,end,event,view,resource) {
-                        
+                    select: function (start,end,event,view,resource) {                      
                         var ResourceTitle = resource.title
                         var ResourceId = resource.id
                         selectedEvent = {
@@ -292,9 +284,6 @@
                             allDay: false,
                             color: '',
                             resourceId: ResourceId
-
-
-
                         }
                         console.log(selectedEvent)
                         openAddEditForm();
@@ -323,7 +312,6 @@
                     }
                 })
             }
-
             //Function to Open Add/Edit form
             function openAddEditForm() {
                 if (selectedEvent != null) {
@@ -338,23 +326,32 @@
                     $('#txtDescription').val(selectedEvent.description);
                     $('#ddThemeColor').val(selectedEvent.color);
 
-                    console.log(selectedEvent)
-
                 }
-
                 //Hides modal
                 $('#eventClickModal').modal('hide');
                 $('#eventAddModal').modal();
-
-
             }
-
             //Open add costumer modal form
-            function openAddEmployeeForm()
-            {   console.log("openAddEmployee function")
-            $('#costumerAddModal').modal('show');
-            }
+            function openAddEditEmployeeForm()
+            {
+                if (selectedResource != null) {
 
+                    var namesplit = [];
+                    namesplit = selectedResource.title.split(" "); // Split title into first and last name
+                 
+                    $('#hdEmployeeID').val(selectedResource.id);
+                    $('#txtFirstName').val(namesplit[0]); 
+                    $('#txtLastName').val(namesplit[1]);
+                    $('#ddOccupation').val(selectedResource.groupId);
+
+ 
+
+
+                }
+
+            $('#resourceClickModal').modal('hide');
+            $('#employeeAddModal').modal('show');
+            }
             //Function to Save a event to database
             function SaveEvent(data) {
                 $.ajax({//Ajax is used for to call controller to get and post data.
@@ -373,7 +370,6 @@
                     }
                 })
             }
-
             //Function to save new Employee
             function SaveEmployee(data)
             {
@@ -384,7 +380,7 @@
                     success: function (data) {
                         if (data.status) {
                             FetchEventAndRenderCalendar();
-                            $('#costumerAddModal').modal('hide');
+                            $('#employeeAddModal').modal('hide');
 
                         }
                     },
@@ -393,10 +389,13 @@
                     }
                 })
             }
+            
+
+
 
             //Button to Add Employee
             $('#btnAddEmployee').click(function () {
-                openAddEmployeeForm();
+                openAddEditEmployeeForm();
             })
             
             //Button to Save New Employee
@@ -512,6 +511,29 @@
             })
 
             
+            $('#btnEditRes').click(function () {
+                //Open modal window for edit form for selected event
+                openAddEditEmployeeForm();
+            })
+            
+            $('#btnDeleteRes').click(function () {
+                if (selectedEvent != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Schedule/DeleteResource",
+                        data: { 'resourceID': selectedResource.id }, //Used to send data through HTTP request POST
+                        success: function (data) {
+                            if (data.status) {  //refresh calender if success
+                                FetchEventAndRenderCalendar();
+                                $('#resourceClickModal').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to delete resource!')
+                        }
+                    })
+                }
+            })
 
 
 
