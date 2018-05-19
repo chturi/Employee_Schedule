@@ -70,7 +70,29 @@
     </div>
 </div>
 
-
+@*Resource click modal*@
+<div id="resourceClickModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="resourceTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+                <button id="btnDeleteRes" class="btn btn-default btn-sm pull-right">
+                    <span class="=" glyphicon glyphicon-remove"></span> Remove
+                </button>
+                <button id="btnEditRes" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                    <span class="=" glyphicon glyphicon-remove"></span> Edit
+                </button>
+                <p id="pDetailsRes"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @*Edit/Add Event Modal*@
 <div id="eventAddModal" class="modal fade" role="dialog">
@@ -159,6 +181,7 @@
 
             var schedule = [];
             var selectedEvent = null;
+            var selectedResource = null;
             FetchEventAndRenderCalendar();
 
             //Ajax call to get the events from database           
@@ -229,6 +252,19 @@
                     resources: {
                         url: "/Schedule/GetResources",
                         type: 'POST'
+                    },
+                    resourceRender: function(resource, labelTds, bodyTds) {
+                        labelTds.on('click', function () {
+                            selectedResource = resource;
+                            console.log(selectedResource)
+                            $('#resourceClickModal #resourceTitle').text(resource.title);
+                            var $description = $('<div/>');
+                            $description.append($('<p>').html('<b>Employment ID: </b>' + resource.id));
+                            $description.append($('<p>').html('<b>Occupation: </b>' + resource.groupId));
+                            $('#resourceClickModal #pDetailsRes').empty().html($description);
+                            $('#resourceClickModal').modal();
+
+                        });
                     },
                     eventClick: function (calEvent, jsEvent, view) {
                         //Creates HTML code for displaying on event click details
