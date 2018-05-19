@@ -168,6 +168,10 @@ namespace Employee_Schedule.Controllers
                 if (oldEvent != null)
                 {
                     //Replaces fields that has been updated
+                    oldEvent.FirstName = emp.FirstName;
+                    oldEvent.LastName = emp.LastName;
+                    oldEvent.Occupation = emp.Occupation;
+                    oldEvent.EmployeeID = emp.EmployeeID;
 
                 }
             }
@@ -182,6 +186,30 @@ namespace Employee_Schedule.Controllers
             status = true;
 
             return new JsonResult { Data = new { status = status } };
+        }
+
+
+        [HttpPost]
+        public JsonResult DeleteEmployee(int employeeID)
+        {
+            Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
+            db.Configuration.ProxyCreationEnabled = false;
+            var status = false;
+
+            //Finds event by ID which should be deleted
+            var emp = db.Employees.Where(a => a.EmployeeID == employeeID).FirstOrDefault();
+
+            if (emp != null)
+            {
+                //Removes event from DB
+                db.Employees.Remove(emp);
+                db.SaveChanges();
+                status = true;
+
+            }
+
+            return new JsonResult { Data = new { status = status } };
+
         }
 
     }

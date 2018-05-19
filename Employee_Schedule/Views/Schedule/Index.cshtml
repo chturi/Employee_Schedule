@@ -517,11 +517,11 @@
             })
             
             $('#btnDeleteRes').click(function () {
-                if (selectedEvent != null && confirm('Are you sure?')) {
+                if (selectedResource != null && confirm('Are you sure?')) {
                     $.ajax({
                         type: 'POST',
-                        url: "/Schedule/DeleteResource",
-                        data: { 'resourceID': selectedResource.id }, //Used to send data through HTTP request POST
+                        url: "/Schedule/DeleteEmployee",
+                        data: { 'employeeID': selectedResource.id }, //Used to send data through HTTP request POST
                         success: function (data) {
                             if (data.status) {  //refresh calender if success
                                 FetchEventAndRenderCalendar();
