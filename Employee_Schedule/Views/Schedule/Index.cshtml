@@ -3,10 +3,11 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Schedule</h2>
-<div id="scheduler"></div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-default" id="btnAddEmployee" style="float: left">Add Employee</button>
+<h2> </h2>
+<div id="scheduler">
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="btnAddEmployee" style="float: left">Add Employee</button>
+    </div>
 </div>
 
 
@@ -133,7 +134,7 @@
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea readonly="readonly" id="txtDescription" rows="3" style="color: #787878;"></textarea>
+                        <textarea readonly="readonly" id="txtDescription" rows="3" style="color: #787878;" disabled="disabled"></textarea>
                     </div>
                     <div class="form-group">
                         <label>Theme Color</label>
@@ -173,10 +174,15 @@
         //Schedule functions
         $(document).ready(function () {
 
+            //Storing variables for event calling and execution
             var schedule = [];
             var selectedEvent = null;
             var selectedResource = null;
+            //Initially execution to render calendar
             FetchEventAndRenderCalendar();
+
+
+            //Functions for Application
 
             //Ajax call to get the events from database           
             function FetchEventAndRenderCalendar() {
@@ -218,14 +224,14 @@
                 //Generate new Scheduler
                 $('#scheduler').fullCalendar({
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', //Open source liscence key
-                    contentHeight: 400,
+                    contentHeight: 600,
                     defaultDate: new Date(), //Display todays date by default
                     defaultView: 'timelineWeek',
                     timeFormat: 'h(:mm)a',
                     header: {
                         left: 'prev,next today', //Option buttons on left corner of header of Scheduler
                         center: 'title',
-                        right: 'month,timelineFiveDays'
+                        right: 'month,timelineWeek'
                     },
                     views: { //Adds timeline view option for fullcalender, "resource view"
                         timelineFiveDays: {
@@ -238,7 +244,7 @@
                             scrollTime: '06:00'
                         }
                     },
-                    //eventLimit: true, //if resource slot is full, replaces graphical represenation with plus sign.
+                    eventLimit: true, //if resource slot is full, replaces graphical represenation with plus sign.
                     eventColor: '#378006', //Default event color
                     events: schedule, 
                     resourceGroupField: 'groupId',
@@ -309,8 +315,11 @@
                             IsFullDay: event.allDay
                         }
                         SaveEvent(data);
-                    }
+                    },
+                    eventOverlap: false,
+                    weekNumbers: true
                 })
+                
             }
             //Function to Open Add/Edit form
             function openAddEditForm() {
@@ -338,10 +347,13 @@
 
                     var namesplit = [];
                     namesplit = selectedResource.title.split(" "); // Split title into first and last name
-                 
+                    var firstname = namesplit[0];
+                    var lastname = namesplit.slice(1, namesplit.length).toString().replace(","," ") //If persons last name has several or spaces between lastnames they are included
+                    
+                    
                     $('#hdEmployeeID').val(selectedResource.id);
-                    $('#txtFirstName').val(namesplit[0]); 
-                    $('#txtLastName').val(namesplit[1]);
+                    $('#txtFirstName').val(firstname); 
+                    $('#txtLastName').val(lastname);
                     $('#ddOccupation').val(selectedResource.groupId);
 
  
@@ -391,7 +403,7 @@
             }
             
 
-
+            //Button handlers for Application
 
             //Button to Add Employee
             $('#btnAddEmployee').click(function () {
@@ -509,13 +521,12 @@
                     $('#divEndDate').show()
                 }
             })
-
             
+            //Employee edit buttons
             $('#btnEditRes').click(function () {
                 //Open modal window for edit form for selected event
                 openAddEditEmployeeForm();
             })
-            
             $('#btnDeleteRes').click(function () {
                 if (selectedResource != null && confirm('Are you sure?')) {
                     $.ajax({

@@ -16,7 +16,11 @@ namespace Employee_Schedule.Controllers
             return View();
         }
 
-        //Method to pull Events from database
+       
+        
+        //Methods for grabbing data to render Schedule
+
+        //Get all Events from DB
         public JsonResult GetEvents()
         {
             Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
@@ -61,7 +65,7 @@ namespace Employee_Schedule.Controllers
                 return new JsonResult { Data = resList, JsonRequestBehavior = JsonRequestBehavior.AllowGet}; 
         }
 
-        //Method to pull resources (employees) from database.
+        //Get all resources (Employees) from DB.
         public JsonResult GetResources()
         {
             Employee_Schedule_DatabaseEntities db = new Employee_Schedule_DatabaseEntities();
@@ -89,7 +93,10 @@ namespace Employee_Schedule.Controllers
             
         }
 
+
         //Method to Save New or edited event
+
+        //Save Event to DB
         [HttpPost]
         public JsonResult SaveEvent(Event evnt)
         {
@@ -128,6 +135,7 @@ namespace Employee_Schedule.Controllers
             return new JsonResult { Data = new { status = status } };
         }
 
+        //Delete Event from DB
         [HttpPost]
         public JsonResult DeleteEvent(int eventID)
         {
@@ -151,6 +159,10 @@ namespace Employee_Schedule.Controllers
             
         }
 
+
+        //Employee Methods
+
+        //Saves new Employee to DB
         [HttpPost]
         public JsonResult SaveEmployee(Employee emp)
         {
@@ -188,7 +200,7 @@ namespace Employee_Schedule.Controllers
             return new JsonResult { Data = new { status = status } };
         }
 
-
+        //Deletes Employee from DB
         [HttpPost]
         public JsonResult DeleteEmployee(int employeeID)
         {
