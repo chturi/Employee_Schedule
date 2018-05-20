@@ -111,7 +111,7 @@
                     </div>
                     <div class="form-group">
                         <label>Start</label>
-                        <div class="input-group date" id="dtp1">
+                        <div class="input-group date" id="dtp1" >
                             <input type="text" id="txtStart" class="form-control" />
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -134,7 +134,7 @@
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea readonly="readonly" id="txtDescription" rows="3" style="color: #787878;" disabled="disabled"></textarea>
+                        <input readonly type="text" id="txtDescription" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Theme Color</label>
@@ -510,9 +510,16 @@
                 }
                 SaveEvent(data);
             })
-            $('#dtp1', '#dtp2').datetimepicker({
-                format: 'MM/DD/YYYY HH:mm A'
-            })
+            $('#dtp1').datetimepicker({
+                format: 'MM/DD/YYYY HH:mm A',
+                
+                
+            });
+            $('#dtp2').datetimepicker({
+                format: 'MM/DD/YYYY HH:mm A',
+                
+            });
+              
             $('#chkIsFullDay').change(function () {
                 if ($(this).is(':checked')) {
                     $('#divEndDate').hide()
