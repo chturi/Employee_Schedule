@@ -6,7 +6,7 @@
     <edmx:Diagrams>
       <Diagram DiagramId="2057ad9fbffe470aa0e50068d0d52082" Name="Diagram1">
         <EntityTypeShape EntityType="Employee_Schedule_DatabaseModel.Employee" Width="1.5" PointX="0.5" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Employee_Schedule_DatabaseModel.Event" Width="1.5" PointX="4.625" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Employee_Schedule_DatabaseModel.Event" Width="1.5" PointX="2.875" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="Employee_Schedule_DatabaseModel.FK__Events__Employee__286302EC" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>

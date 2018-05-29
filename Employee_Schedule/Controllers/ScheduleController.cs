@@ -208,13 +208,33 @@ namespace Employee_Schedule.Controllers
             db.Configuration.ProxyCreationEnabled = false;
             var status = false;
 
+            List<Event> empEvent = new List<Event>();
+
             //Finds event by ID which should be deleted
             var emp = db.Employees.Where(a => a.EmployeeID == employeeID).FirstOrDefault();
 
             if (emp != null)
             {
-                //Removes event from DB
+                //Removes event connected to Employee from DB
+                if (db.Events.Where(x => x.EmployeeID == employeeID).Any())
+                {
+                    empEvent = db.Events.Where(x => x.EmployeeID == employeeID).ToList();
+
+                    foreach (Event tempev in empEvent)
+                    {
+                        db.Events.Remove(tempev);
+                        
+                    }
+
+                    empEvent.Clear();
+                }
+
+                bool eventthere= db.Events.Where(x => x.EmployeeID == employeeID).Any();
+
+
+
                 db.Employees.Remove(emp);
+                
                 db.SaveChanges();
                 status = true;
 
