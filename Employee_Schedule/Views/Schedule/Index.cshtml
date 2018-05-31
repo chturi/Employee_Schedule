@@ -208,7 +208,7 @@
 
                             });
                         })
-                        console.log(schedule)
+                       
                         GenerateScheduler(schedule)
                         $('#scheduler').fullCalendar('refetchEvents')
                         $('#scheduler').fullCalendar('refetchResources')
@@ -259,7 +259,7 @@
                     resourceRender: function(resource, labelTds, bodyTds) {
                         labelTds.on('click', function () {
                             selectedResource = resource;
-                            console.log(selectedResource)
+                            
                             $('#resourceClickModal #resourceTitle').text(resource.title);
                             var $description = $('<div/>');
                             $description.append($('<p>').html('<b>Employment ID: </b>' + resource.id));
