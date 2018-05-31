@@ -311,8 +311,8 @@
                         var data = {
                             EventID: event.eventID,
                             EmployeeID: event.resourceId,
-                            Start: event.start.format("MM-DD-YYYY HH:mm a"),
-                            End: event.end != null ? event.end.format("MM-DD-YYYY HH:mm a") : null,
+                            Start: moment.utc(event.start).format("MM-DD-YYYY HH:mm a"),
+                            End: event.end != null ? moment.utc(event.end).format("MM-DD-YYYY HH:mm a") : null,
                             Description: event.description,
                             ThemeColor: event.color,
                             IsFullDay: event.allDay
@@ -321,6 +321,7 @@
                     },
                     eventOverlap: false,
                     weekNumbers: true,
+                    draggable: true,
                      })
                 
             }
@@ -444,7 +445,7 @@
                     alert('Last Name required')
                     return;
                 }
-                if ($('#ddOccupation').val().trim() == "") {
+                if ($('#ddOccupation').val() == null) {
                     alert('Occupation required')
                     return;
                 }
