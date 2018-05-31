@@ -215,26 +215,19 @@ namespace Employee_Schedule.Controllers
 
             if (emp != null)
             {
-                //Removes event connected to Employee from DB
+                //Removes events connected to Employee from DB
                 if (db.Events.Where(x => x.EmployeeID == employeeID).Any())
                 {
                     empEvent = db.Events.Where(x => x.EmployeeID == employeeID).ToList();
-
                     foreach (Event tempev in empEvent)
                     {
-                        db.Events.Remove(tempev);
-                        
+                        db.Events.Remove(tempev);                       
                     }
-
                     empEvent.Clear();
                 }
 
-                bool eventthere= db.Events.Where(x => x.EmployeeID == employeeID).Any();
 
-
-
-                db.Employees.Remove(emp);
-                
+                db.Employees.Remove(emp);               
                 db.SaveChanges();
                 status = true;
 

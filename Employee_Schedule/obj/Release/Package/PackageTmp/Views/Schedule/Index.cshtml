@@ -187,6 +187,7 @@
             //Ajax call to get the events from database           
             function FetchEventAndRenderCalendar() {
                 schedule = [];
+                
                 $.ajax({
                     type: "GET",
                     url: "/Schedule/GetEvents",
@@ -197,8 +198,8 @@
                                 eventID: v.EventID,
                                 title: v.title,
                                 description: v.Description,
-                                start: moment(v.Start),
-                                end: v.End != null ? moment(v.End).local() : null,
+                                start: moment.utc(v.Start).format(),
+                                end: v.End != null ? moment.utc(v.End).format() : null,
                                 color: v.ThemeColor,
                                 allDay: v.IsFullDay,
                                 resourceId: v.EmployeeID,
@@ -207,7 +208,7 @@
 
                             });
                         })
-                        //console.log(schedule)
+                        console.log(schedule)
                         GenerateScheduler(schedule)
                         $('#scheduler').fullCalendar('refetchEvents')
                         $('#scheduler').fullCalendar('refetchResources')
@@ -272,9 +273,9 @@
                         selectedEvent = calEvent;
                         $('#eventClickModal #eventTitle').text(calEvent.title);
                         var $description = $('<div/>');
-                        $description.append($('<p>').html('<b>Start: </b>' + calEvent.start.format("MM-DD-YYYY HH:mm a")));
+                        $description.append($('<p>').html('<b>Start: </b>' + moment.utc(calEvent.start).format("MM/DD/YYYY HH:mm A")));
                         if (calEvent.end != null) {
-                            $description.append($('<p>').html('<b>End: </b>' + calEvent.end.format("MM-DD-YYYY HH:mm a")));
+                            $description.append($('<p>').html('<b>End: </b>' + moment.utc(calEvent.end).format("MM/DD/YYYY HH:mm A")));
                         }
                         $description.append($('<p>').html('<b>Description: </b>' + calEvent.description));
                         $('#eventClickModal #pDetails').empty().html($description);
@@ -287,13 +288,13 @@
                             eventID: 0,
                             title: ResourceTitle,
                             description: '',
-                            start: start,
-                            end: end,
+                            start: moment.utc(start).format(),
+                            end: moment.utc(end).format(),
                             allDay: false,
                             color: '',
                             resourceId: ResourceId
                         }
-                        console.log(selectedEvent)
+                        
                         openAddEditForm();
                     },
                     //Time slot settings
@@ -319,8 +320,8 @@
                         SaveEvent(data);
                     },
                     eventOverlap: false,
-                    weekNumbers: true
-                })
+                    weekNumbers: true,
+                     })
                 
             }
             //Function to Open Add/Edit form
@@ -330,10 +331,11 @@
                     $('#hdEventID').val(selectedEvent.eventID);
                     $('#hdEmployeeID').val(selectedEvent.resourceId);
                     $('#txtSubject').val(selectedEvent.title);
-                    $('#txtStart').val(selectedEvent.start.format('MM/DD/YYYY HH:mm A'));
+                    // selectedEvent.start.format('MM/DD/YYYY HH:mm A')
+                    $('#txtStart').val(moment.utc(selectedEvent.start).format("MM/DD/YYYY HH:mm A"));
                     $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
                     $('#chkIsFullDay').change();
-                    $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('MM/DD/YYYY HH:mm A') : "");
+                    $('#txtEnd').val(selectedEvent.end != null ? moment.utc(selectedEvent.end).format("MM/DD/YYYY HH:mm A") : "");
                     $('#txtDescription').val(selectedEvent.description);
                     $('#ddThemeColor').val(selectedEvent.color);
 
